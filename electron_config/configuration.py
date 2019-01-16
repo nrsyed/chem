@@ -1,6 +1,6 @@
 import sys
 
-def orbitals(num_electrons):
+def get_subshells(num_electrons):
     subshells = []
     diag = -1
     k = 0
@@ -15,7 +15,7 @@ def orbitals(num_electrons):
         k += 1
     return subshells
 
-def formatted_config(subshells, order="energy"):
+def format_config(subshells, order="energy"):
     orbitals = ("s", "p", "d", "f", "g", "h", "i", "k")
     utf8_superscripts = ("\u2070", "\u00b9", "\u00b2", "\u00b3", "\u2074",
             "\u2075", "\u2076", "\u2077", "\u2078", "\u2079")
@@ -38,7 +38,6 @@ if __name__ == "__main__":
     else:
         electrons = default_electrons
 
-    subshells = orbitals(electrons)
-    config = formatted_config(subshells)
-    #config = formatted_config(subshells, order="number")
+    subshells = get_subshells(electrons)
+    config = format_config(subshells)
     print(config)
