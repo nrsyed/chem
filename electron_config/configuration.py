@@ -3,16 +3,16 @@ import sys
 def get_subshells(num_electrons):
     subshells = []
     diag = -1
-    k = 0
+    j = 0
     while num_electrons > 0:
-        if k >= (diag // 2) + 1:
+        if j >= (diag // 2) + 1:
             diag += 1
-            k = 0
-        pqn = (diag // 2) + (diag % 2) + k
-        aqn = (diag // 2) - k
+            j = 0
+        pqn = (diag // 2) + (diag % 2) + j
+        aqn = (diag // 2) - j
         subshells.append((pqn, aqn, min(4 * aqn + 2, num_electrons)))
         num_electrons -= 4 * aqn + 2
-        k += 1
+        j += 1
     return subshells
 
 def format_config(subshells, order="energy"):
