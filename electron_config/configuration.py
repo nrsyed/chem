@@ -21,13 +21,34 @@ def get_subshells(num_electrons):
         j += 1
     return subshells
 
-def format_config(subshells, order="energy"):
-    orbitals = ("s", "p", "d", "f", "g", "h", "i", "k")
+def format_config(subshells, order="energy", noble_gas=False):
+    orbitals = ("s", "p", "d", "f", "g", "h", "i", "k", "l", "m", "n")
+    noble_gases = {2: "He", 10: "Ne", 18: "Ar", 36: "Kr",
+            54: "Xe", 86: "Rn", 118: "Og"}
     utf8_superscripts = {0: "\u2070", 1: "\u00b9", 2: "\u00b2", 3: "\u00b3",
             4: "\u2074", 5: "\u2075", 6: "\u2076", 7: "\u2077",
             8: "\u2078", 9: "\u2079"}
     config = []
-    
+
+    if noble_gas:
+        # Determine noble gas with nearest atomic number.
+        num_electrons = sum([subshell[2] for subshell in subshells])
+        noble_atomic_num = 0
+        next_noble_atomic_num = 0
+        k = 0
+        while next_noble_atomic_num <= num_electrons:
+            noble_atomic_num = next_noble_atomic_num
+            k += 1
+            next_noble_atomic_num = noble(k)
+        if noble_atomic_num > 0:
+            # Get subshells for the noble gas; remove as many subshells
+            # from source list. Add noble gas to config.
+            noble_config = get_subshells(noble_atomic_num)
+            subshells = subshells[len(noble_config):]
+            noble_gas_abbrev = "[{}]".format(
+                    noble_gases.get(noble_atomic_num, str(noble_atomic_num)))
+            config.append(noble_gas_abbrev)
+
     if order == "number":
         subshells.sort(key=lambda elem: (elem[0], elem[1]))
 
@@ -54,5 +75,5 @@ if __name__ == "__main__":
         electrons = default_electrons
 
     subshells = get_subshells(electrons)
-    config = format_config(subshells)
+    config = format_config(subshells, noble_gas=True)
     print(config)
