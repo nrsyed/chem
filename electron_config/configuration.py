@@ -1,6 +1,12 @@
 import sys
 
 def get_subshells(num_electrons):
+    """
+    Return a list of tuples corresponding to subshells of the element with
+    the given number of electrons. Each tuple contains the principle quantum
+    number, azimuthal quantum number, and number of electrons in the subshell.
+    Subshells are filled per the Madelung rule.
+    """
     subshells = []
     diag = -1
     j = 0
@@ -34,8 +40,8 @@ def format_config(subshells, order="energy"):
 
 def noble(k):
     """
-    Return the atomic number of the kth noble gas (He=1, Ne=2, Ar=3, ...).
-    See README for derivation.
+    Return the atomic number of the kth noble gas, where k=1 is He,
+    k=2 is Ne, etc. See README for derivation.
     """
     prev_pairs = int((2 * (k // 2) * (k // 2 + 1) * (2 * (k // 2) + 1)) / 3) - 2
     return prev_pairs + (2 * (k % 2 + 1) * (k // 2 + 1)**2)
@@ -50,6 +56,3 @@ if __name__ == "__main__":
     subshells = get_subshells(electrons)
     config = format_config(subshells)
     print(config)
-    while True:
-        k = int(input("Enter k: "))
-        print(noble(k))
