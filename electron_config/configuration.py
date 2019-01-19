@@ -21,7 +21,7 @@ def get_subshells(num_electrons):
         j += 1
     return subshells
 
-def format_config(subshells, order="energy", noble_gas=False):
+def format_config(subshells, order="energy", noble_gas=False, separator=""):
     orbitals = ("s", "p", "d", "f", "g", "h", "i", "k", "l", "m", "n")
     noble_gases = {2: "He", 10: "Ne", 18: "Ar", 36: "Kr",
             54: "Xe", 86: "Rn", 118: "Og"}
@@ -49,7 +49,7 @@ def format_config(subshells, order="energy", noble_gas=False):
                     noble_gases.get(noble_atomic_num, str(noble_atomic_num)))
             config.append(noble_gas_abbrev)
 
-    if order == "number":
+    if order == "numeric":
         subshells.sort(key=lambda elem: (elem[0], elem[1]))
 
     for pqn, aqn, electrons in subshells:
@@ -57,7 +57,7 @@ def format_config(subshells, order="energy", noble_gas=False):
         for digit in str(electrons):
             formatted += utf8_superscripts[int(digit)]
         config.append(formatted)
-    return "".join(config)
+    return separator.join(config)
 
 def noble(k):
     """
@@ -75,5 +75,5 @@ if __name__ == "__main__":
         electrons = default_electrons
 
     subshells = get_subshells(electrons)
-    config = format_config(subshells, noble_gas=True)
+    config = format_config(subshells, noble_gas=True, order="numeric", separator="")
     print(config)
