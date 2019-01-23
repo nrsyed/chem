@@ -9,18 +9,18 @@ def ground_state(atomic_num):
     Subshells are filled per the Madelung rule.
     """
 
-    num_electrons = atomic_num
+    remaining_electrons = atomic_num
     subshells = []
     diag = -1
     j = 0
-    while num_electrons > 0:
+    while remaining_electrons > 0:
         if j >= (diag // 2) + 1:
             diag += 1
             j = 0
         pqn = (diag // 2) + (diag % 2) + 1 + j
         aqn = (diag // 2) - j
-        subshells.append((pqn, aqn, min(4 * aqn + 2, num_electrons)))
-        num_electrons -= 4 * aqn + 2
+        subshells.append((pqn, aqn, min(4 * aqn + 2, remaining_electrons)))
+        remaining_electrons -= 4 * aqn + 2
         j += 1
     return subshells
 
