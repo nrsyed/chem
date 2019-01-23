@@ -14,7 +14,7 @@ def ground_state(atomic_num):
     diag = -1
     j = 0
     while remaining_electrons > 0:
-        if j >= (diag // 2) + 1:
+        if j > (diag // 2):
             diag += 1
             j = 0
         pqn = (diag // 2) + (diag % 2) + 1 + j
