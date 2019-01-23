@@ -46,7 +46,7 @@ def format_config(subshells, order="energy", noble_gas=False, separator=""):
         if noble_atomic_num > 0:
             # Get subshells for the noble gas; remove as many subshells
             # from source list. Add noble gas to config.
-            noble_config = get_subshells(noble_atomic_num)
+            noble_config = ground_state(noble_atomic_num)
             subshells = subshells[len(noble_config):]
             noble_gas_abbrev = "[{}]".format(
                     NOBLE_GASES.get(noble_atomic_num, str(noble_atomic_num)))
