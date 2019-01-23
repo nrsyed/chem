@@ -1,5 +1,107 @@
-# chem
-Miscellaneous chemistry-related programs
+
+## Ground state electron configuration
+
+In an atom's ground state, electrons fill subshells in an order determined by the
+[Madelung rule](https://en.wikipedia.org/wiki/Aufbau_principle#Madelung_energy_ordering_rule),
+shown below.
+
+<img src="images/madelung_rule.png">
+
+The diagonals are numbered in the order they're traversed, with subshells being
+filled in the order 1s (diagonal 0), 2s (diagonal 1), 2p, 3s (diagonal 2),
+3p, 4s (diagonal 3), 3d, 4p, 5s (diagonal 4), and so on. Writing the principal
+quantum numbers <em>n</em> and azimuthal quantum numbers <em>l</em> of the
+subshells:
+
+<img src="images/madelung_table.png">
+
+Then, tabulating the (<em>n</em>, <em>l</em>) "coordinates" of the start and
+end of each diagonal yields the following:
+
+<table>
+  <tr>
+    <td>Diagonal</td>
+    <td>Start</td>
+    <td>End</td>
+  </tr>
+  <tr>
+    <td>0</td>
+    <td>(1, 0)</td>
+    <td>(1, 0)</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>(2, 0)</td>
+    <td>(2, 0)</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>(2, 1)</td>
+    <td>(3, 0)</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>(3, 1)</td>
+    <td>(4, 0)</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td>(3, 2)</td>
+    <td>(5, 0)</td>
+  </tr>
+  <tr>
+    <td>5</td>
+    <td>(4, 2)</td>
+    <td>(6, 0)</td>
+  </tr>
+  <tr>
+    <td>6</td>
+    <td>(4, 3)</td>
+    <td>(7, 0)</td>
+  </tr>
+  <tr>
+    <td>7</td>
+    <td>(5, 3)</td>
+    <td>(8, 0)</td>
+  </tr>
+  <tr>
+    <td>8</td>
+    <td>(5, 4)</td>
+    <td>(9, 0)</td>
+  </tr>
+  <tr>
+    <td>...</td>
+    <td>...</td>
+    <td>...</td>
+  </tr>
+</table>
+
+A pattern emerges: each diagonal <em>d</em> starts at (<em>n</em>, <em>l</em>)
+= ((<em>d</em> div 2) + (<em>d</em> mod 2) + 1, (<em>d</em> div 2))
+and ends at (<em>n</em>, <em>l</em>) = (<em>d</em> + 1, 0).
+
+<img src="images/eqn_start.png">
+
+<img src="images/eqn_end.png">
+
+Further, each each diagonal contains (<em>d</em> div 2) subshells. Obtaining
+the ground state electron configuration then becomes a matter of keeping track
+of the current diagonal, introducing a variable <em>j</em> to track the current
+element of the current diagonal (0 ≤ <em>j</em> ≤ (<em>d</em> div 2)). When
+<em>j</em> exceeds the number of elements in the current diagonal, the diagonal
+is incremented and <em>j</em> is reset to 0. During each iteration, the number
+of electrons that can fill the current subshell (which is related to the
+azimuthal quantum number <em>l</em> and is equal to 4<em>l</em> + 2) is
+subtracted from the number of remaining electrons that have not been placed
+into subshells. If the capacity of the current subshell is greater than the
+number of remaining electrons, the number of remaining electrons is placed
+into the current subshell and the routine terminates. At the end of the
+iteration, a tuple containing the subshell's principal quantum number <em>n</em>,
+azimuthal quantum number <em>l</em>, and the number of electrons in the
+subshell is added to a list, which the function ultimately returns.
+The procedure is shown below in pseudocode.
+
+<img src="images/ground_pseudocode.png">
 
 ## Atomic number of the <em>k</em><sup>th</sup> noble gas
 
@@ -46,7 +148,7 @@ contains <em>k</em> = 2, 3 (<em>ΔZ</em> = 8), etc., it can be seen that
 <em>ΔZ</em> for a given pair <em>p</em> is equal to the number of electrons
 in each shell, i.e., 2<em>p</em><sup>2</sup>:
 
-![Equation2](images/eqn2.png)
+<img src="images/eqn2.png">
 
 Also observe that the atomic number <em>Z</em> of any element in the table is
 equal to the sum of all the <em>ΔZ</em> values up to and including that
@@ -56,13 +158,13 @@ element. For example, the atomic number for xenon (<em>k</em> = 5) is equal to
 since <em>k</em> = 0 isn't an element and doesn't contribute any electrons).
 Then the sum of the first <em>P</em> pairs is given by the following sum:
 
-![Equation3a](images/eqn3a.png)
+<img src="images/eqn3a.png">
 
 where we subtract 2 to account for <em>k</em> = 0. From
 [Faulhaber's formula](https://en.wikipedia.org/wiki/Faulhaber%27s_formula),
 the sum of the quadratic sequence above can be rewritten as a cubic polynomial:
 
-![Equation3b](images/eqn3b.png)
+<img src="images/eqn3b.png">
 
 Then, the atomic number for a given <em>k</em> can be obtained by:
 
@@ -77,9 +179,11 @@ Then, the atomic number for a given <em>k</em> can be obtained by:
 The pair <em>p</em> can be obtained from the integer division of <em>k</em>
 into 2:
 
-![Equationp1](images/p1.png)
+<img src="images/p1.png">
 
 Then the final equation for the atomic number <em>Z<sub>k</sub></em> of noble
 gas <em>k</em> in the sequence is:
 
-![Equation4](images/eqn4.png)
+<img src="images/eqn4.png">
+
+where `div` refers to integer division and `mod` to modulo division.
