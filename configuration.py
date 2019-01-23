@@ -1,7 +1,7 @@
 import sys
 from noble import noble
 
-def get_subshells(num_electrons):
+def ground_state(num_electrons):
     """
     Return a list of tuples corresponding to subshells of the element with
     the given number of electrons. Each tuple contains the principle quantum
@@ -67,6 +67,6 @@ if __name__ == "__main__":
     else:
         electrons = default_electrons
 
-    subshells = get_subshells(electrons)
+    subshells = ground_state(electrons)
     config = format_config(subshells, noble_gas=True, order="numeric", separator="")
     print(config)
