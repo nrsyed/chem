@@ -1,13 +1,15 @@
 import sys
 from noble import noble
 
-def ground_state(num_electrons):
+def ground_state(atomic_num):
     """
     Return a list of tuples corresponding to subshells of the element with
     the given number of electrons. Each tuple contains the principle quantum
     number, azimuthal quantum number, and number of electrons in the subshell.
     Subshells are filled per the Madelung rule.
     """
+
+    num_electrons = atomic_num
     subshells = []
     diag = -1
     j = 0
