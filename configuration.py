@@ -1,3 +1,4 @@
+import argparse
 import sys
 from noble import noble
 
@@ -63,12 +64,17 @@ def format_config(subshells, order="energy", noble_gas=False, separator=""):
     return separator.join(config)
 
 if __name__ == "__main__":
-    default_electrons = 10
-    if len(sys.argv) > 1:
-        electrons = int(sys.argv[1])
-    else:
-        electrons = default_electrons
+    parser = argparse.ArgumentParser()
+    parser.add_argument("input", help="Element or number of electrons")
+    parser.add_argument("-o", "--order", default="energy",
+            help="Order in which to print subshells: 'energy' (default; in\
+                    order of increasing energy) or 'numeric' (in order of\
+                    increasing quantum number)")
+    parser.add_argument("-n", "--noble", action="store_true",
+            help="Use noble gas notation")
+    parser.add_argument("-c", "--charge", type=int, default=0,
+            help="Atom charge (default 0)")
+    parser.add_argument("-d", "--delimiter", default="",
+            help="Character separating printed subshells (default none)")
 
-    subshells = ground_state(electrons)
-    config = format_config(subshells, noble_gas=True, order="numeric", separator="")
-    print(config)
+    args = vars(parser.parse_args())
