@@ -1,6 +1,9 @@
 import argparse
+from collections import namedtuple
 import sys
 from noble import noble
+
+Subshell = namedtuple("Subshell", ["position", "pqn", "aqn", "electrons"])
 
 def ground_state(atomic_num):
     """
@@ -13,6 +16,7 @@ def ground_state(atomic_num):
     remaining_electrons = atomic_num
     subshells = []
     diag = -1
+    i = 0
     j = 0
     while remaining_electrons > 0:
         if j > (diag // 2):
@@ -20,8 +24,13 @@ def ground_state(atomic_num):
             j = 0
         pqn = (diag // 2) + (diag % 2) + 1 + j
         aqn = (diag // 2) - j
-        subshells.append((pqn, aqn, min(4 * aqn + 2, remaining_electrons)))
+        electrons_in_subshell = min(4 * aqn + 2, remaining_electrons)
+        subshell = Subshell(position=i, pqn=pqn, aqn=aqn,
+                electrons=electrons_in_subshell)
+        subshells.append(subshell)
+
         remaining_electrons -= 4 * aqn + 2
+        i += 1
         j += 1
     return subshells
 
@@ -54,11 +63,11 @@ def format_config(subshells, order="energy", noble_gas=False, delimiter=""):
             config.append(noble_gas_abbrev)
 
     if order == "numeric":
-        subshells.sort(key=lambda elem: (elem[0], elem[1]))
+        subshells.sort(key=lambda subshell: (subshell.pqn, subshell.aqn))
 
-    for pqn, aqn, electrons in subshells:
-        formatted = "{}{}".format(pqn, ORBITALS[aqn])
-        for digit in str(electrons):
+    for subshell in subshells:
+        formatted = "{}{}".format(subshell.pqn, ORBITALS[subshell.aqn])
+        for digit in str(subshell.electrons):
             formatted += UTF8_SUPERSCRIPTS[int(digit)]
         config.append(formatted)
     return delimiter.join(config)
