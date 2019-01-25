@@ -45,7 +45,7 @@ def format_config(subshells, order="energy", noble_gas=False, delimiter=""):
 
     if noble_gas:
         # Determine noble gas with nearest atomic number.
-        num_electrons = sum([subshell[2] for subshell in subshells])
+        num_electrons = sum([subshell.electrons for subshell in subshells])
         noble_atomic_num = 0
         next_noble_atomic_num = 0
         k = 0
