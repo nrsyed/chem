@@ -25,7 +25,7 @@ def ground_state(atomic_num):
         j += 1
     return subshells
 
-def format_config(subshells, order="energy", noble_gas=False, separator=""):
+def format_config(subshells, order="energy", noble_gas=False, delimiter=""):
     ORBITALS = ("s", "p", "d", "f", "g", "h", "i", "k", "l", "m", "n")
     NOBLE_GASES = {2: "He", 10: "Ne", 18: "Ar", 36: "Kr",
             54: "Xe", 86: "Rn", 118: "Og"}
@@ -61,7 +61,7 @@ def format_config(subshells, order="energy", noble_gas=False, separator=""):
         for digit in str(electrons):
             formatted += UTF8_SUPERSCRIPTS[int(digit)]
         config.append(formatted)
-    return separator.join(config)
+    return delimiter.join(config)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
