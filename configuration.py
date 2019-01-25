@@ -78,3 +78,9 @@ if __name__ == "__main__":
             help="Character separating printed subshells (default none)")
 
     args = vars(parser.parse_args())
+
+    num_electrons = int(args["input"])
+    subshells = ground_state(num_electrons)
+    config = format_config(subshells, order=args["order"],
+            noble_gas=args["noble"], delimiter=args["delimiter"])
+    print(config)
