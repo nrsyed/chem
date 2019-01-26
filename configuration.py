@@ -34,6 +34,29 @@ def ground_state(atomic_num):
         j += 1
     return subshells
 
+def cation(subshells, charge):
+    if charge >= sum([subshell.electrons for subshell in subshells]):
+        return []
+
+    subshells.sort(key=lambda subshell: (subshell.pqn, subshell.aqn))
+
+    i = len(subshells) - 1
+    while charge:
+        subshell = subshells[i]
+        electrons_to_remove = min(charge, subshell.electrons)
+        if electrons_to_remove == subshell.electrons:
+            del subshells[i]
+        else:
+            updated_electrons = subshell.electrons - electrons_to_remove
+            updated_subshell = Subshell(position=subshell.position,
+                    pqn=subshell.pqn, aqn=subshell.aqn,
+                    electrons=updated_electrons)
+            subshells[i] = updated_subshell
+        charge -= electrons_to_remove
+        i -= 1
+    subshells.sort(key=lambda subshell: subshell.position)
+    return subshells
+
 def format_config(subshells, order="energy", noble_gas=False, delimiter=""):
     ORBITALS = ("s", "p", "d", "f", "g", "h", "i", "k", "l", "m", "n")
     NOBLE_GASES = {2: "He", 10: "Ne", 18: "Ar", 36: "Kr",
@@ -90,6 +113,10 @@ if __name__ == "__main__":
 
     num_electrons = int(args["input"])
     subshells = ground_state(num_electrons)
+
+    if args["charge"] > 0:
+        subshells = cation(subshells, args["charge"])
+
     config = format_config(subshells, order=args["order"],
             noble_gas=args["noble"], delimiter=args["delimiter"])
     print(config)
