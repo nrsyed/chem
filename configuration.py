@@ -5,7 +5,7 @@ from noble import noble
 
 Subshell = namedtuple("Subshell", ["position", "pqn", "aqn", "electrons"])
 
-def ground_state(atomic_num):
+def aufbau_config(num_electrons):
     """
     Return a list of tuples corresponding to subshells of the element with
     the given number of electrons. Each tuple contains the principle quantum
@@ -13,7 +13,7 @@ def ground_state(atomic_num):
     Subshells are filled per the Madelung rule.
     """
 
-    remaining_electrons = atomic_num
+    remaining_electrons = num_electrons
     subshells = []
     diag = -1
     i = 0
@@ -24,6 +24,7 @@ def ground_state(atomic_num):
             j = 0
         pqn = (diag // 2) + (diag % 2) + 1 + j
         aqn = (diag // 2) - j
+
         electrons_in_subshell = min(4 * aqn + 2, remaining_electrons)
         subshell = Subshell(position=i, pqn=pqn, aqn=aqn,
                 electrons=electrons_in_subshell)
@@ -34,7 +35,7 @@ def ground_state(atomic_num):
         j += 1
     return subshells
 
-def cation(subshells, charge):
+def cation_config(subshells, charge):
     if charge >= sum([subshell.electrons for subshell in subshells]):
         return []
 
