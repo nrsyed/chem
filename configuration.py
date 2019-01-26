@@ -1,6 +1,5 @@
 import argparse
 from collections import namedtuple
-import sys
 from noble import noble
 
 Subshell = namedtuple("Subshell", ["position", "pqn", "aqn", "electrons"])
