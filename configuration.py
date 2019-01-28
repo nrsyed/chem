@@ -39,11 +39,22 @@ def aufbau_config(num_electrons):
     return subshells
 
 def cation_config(subshells, charge):
+    """
+    Given a list of subshells from aufbau_config() and a positive ion charge,
+    return the electron configuration of the cation by removing electrons
+    from the subshells with the highest principal quantum numbers.
+    """
+
+    # If charge exceeds total electrons, return blank list.
     if charge >= sum([subshell.electrons for subshell in subshells]):
         return []
 
+    # Sort subshells by principal quantum number, then azimuthal quantum number.
     subshells.sort(key=lambda subshell: (subshell.pqn, subshell.aqn))
 
+    # Iterate in reverse over the sorted list of subshells, removing the
+    # necessary electrons from each outermost subshell.
+    # Delete subshells that end up without electrons.
     i = len(subshells) - 1
     while charge:
         subshell = subshells[i]
@@ -58,6 +69,9 @@ def cation_config(subshells, charge):
             subshells[i] = updated_subshell
         charge -= electrons_to_remove
         i -= 1
+
+    # Return list of subshells sorted by Madelung rule energy
+    # (i.e., by position in sequence).
     subshells.sort(key=lambda subshell: subshell.position)
     return subshells
 
