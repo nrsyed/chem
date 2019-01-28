@@ -15,15 +15,19 @@ def aufbau_config(num_electrons):
     remaining_electrons = num_electrons
     subshells = []
     diag = -1
-    i = 0
-    j = 0
+    i = 0   # Loop counter to track position of each subshell in sequence.
+    j = 0   # Counter to track progress through diagonals.
     while remaining_electrons > 0:
         if j > (diag // 2):
             diag += 1
             j = 0
+
+        # Compute principal (pqn) and azimuthal (aqn) quantum numbers.
         pqn = (diag // 2) + (diag % 2) + 1 + j
         aqn = (diag // 2) - j
 
+        # Fill the subshell with as many electrons as it can hold or as many
+        # electrons remain, whichever is smaller.
         electrons_in_subshell = min(4 * aqn + 2, remaining_electrons)
         subshell = Subshell(position=i, pqn=pqn, aqn=aqn,
                 electrons=electrons_in_subshell)
