@@ -18,10 +18,34 @@ class ElectronConfiguration:
 
     ATOMIC_NUMBERS = {symbol: i + 1 for i, symbol in enumerate(ELEMENTS)}
 
+    NOBLE_GASES = {2: "He", 10: "Ne", 18: "Ar", 36: "Kr",
+            54: "Xe", 86: "Rn", 118: "Og"}
+    ORBITALS = ("s", "p", "d", "f", "g", "h", "i", "k", "l", "m", "n")
+
+    extra_orbitals = [chr(i) for i in range(ord("g"), ord("z") + 1)
+        if chr(i) not in ("s", "p", "d", "f", "j")]
+    ORBITALS = ["s", "p", "d", "f"] + extra_orbitals
+
     Subshell = namedtuple("Subshell", ["position", "pqn", "aqn", "electrons"])
 
     def __init__(self):
         pass
+
+    @classmethod
+    def get_subshells(cls, input_, charge=0):
+        if isinstance(input_, int):
+            atomic_num = input_
+        elif isinstance(input_, str):
+            atomic_num = cls.ATOMIC_NUMBERS[input_]
+        #else:
+            # throw exception
+
+        if charge <= 0:
+            subshells = cls.aufbau_config(atomic_num - charge)
+        else:
+            subshells = cls.aufbau_config(atomic_num)
+            subshells = cls.cation_config(subshells, charge)
+        return subshells
 
     @classmethod
     def aufbau_config(cls, num_electrons):
@@ -97,10 +121,8 @@ class ElectronConfiguration:
         return subshells
 
     @classmethod
-    def format_config(subshells, order="energy", noble_gas=False, delimiter=""):
-        ORBITALS = ("s", "p", "d", "f", "g", "h", "i", "k", "l", "m", "n")
-        NOBLE_GASES = {2: "He", 10: "Ne", 18: "Ar", 36: "Kr",
-                54: "Xe", 86: "Rn", 118: "Og"}
+    def format_config(cls, subshells, order="energy", noble_gas=False, delimiter=""):
+
         UTF8_SUPERSCRIPTS = {0: "\u2070", 1: "\u00b9", 2: "\u00b2", 3: "\u00b3",
                 4: "\u2074", 5: "\u2075", 6: "\u2076", 7: "\u2077",
                 8: "\u2078", 9: "\u2079"}
@@ -119,17 +141,17 @@ class ElectronConfiguration:
             if noble_atomic_num > 0:
                 # Get subshells for the noble gas; remove as many subshells
                 # from source list. Add noble gas to config.
-                noble_config = ground_state(noble_atomic_num)
+                noble_config = cls.aufbau_config(noble_atomic_num)
                 subshells = subshells[len(noble_config):]
                 noble_gas_abbrev = "[{}]".format(
-                        NOBLE_GASES.get(noble_atomic_num, str(noble_atomic_num)))
+                        cls.NOBLE_GASES.get(noble_atomic_num, str(noble_atomic_num)))
                 config.append(noble_gas_abbrev)
 
         if order == "numeric":
             subshells.sort(key=lambda subshell: (subshell.pqn, subshell.aqn))
 
         for subshell in subshells:
-            formatted = "{}{}".format(subshell.pqn, ORBITALS[subshell.aqn])
+            formatted = "{}{}".format(subshell.pqn, cls.ORBITALS[subshell.aqn])
             for digit in str(subshell.electrons):
                 formatted += UTF8_SUPERSCRIPTS[int(digit)]
             config.append(formatted)
@@ -151,15 +173,12 @@ if __name__ == "__main__":
 
     args = vars(parser.parse_args())
 
-    num_electrons = int(args["input"])
-    #subshells = aufbau_config(num_electrons)
-
-    #if args["charge"] > 0:
-    #    subshells = cation(subshells, args["charge"])
-
-    #config = format_config(subshells, order=args["order"],
-    #        noble_gas=args["noble"], delimiter=args["delimiter"])
-    #print(config)
+    if args["input"].isdigit():
+        input_ = int(args["input"])
+    else:
+        input_ = args["input"]
 
     c = ElectronConfiguration()
-    subshells = c.aufbau_config(num_electrons)
+    subshells = c.get_subshells(input_, charge=args["charge"])
+    print(c.format_config(subshells, order=args["order"],
+        noble_gas=args["noble"], delimiter=args["delimiter"]))
