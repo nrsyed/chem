@@ -20,7 +20,6 @@ class ElectronConfiguration:
 
     NOBLE_GASES = {2: "He", 10: "Ne", 18: "Ar", 36: "Kr",
             54: "Xe", 86: "Rn", 118: "Og"}
-    ORBITALS = ("s", "p", "d", "f", "g", "h", "i", "k", "l", "m", "n")
 
     extra_orbitals = [chr(i) for i in range(ord("g"), ord("z") + 1)
         if chr(i) not in ("s", "p", "d", "f", "j")]
