@@ -31,7 +31,7 @@ class ElectronConfiguration:
         pass
 
     @classmethod
-    def get_subshells(cls, input_, charge=0):
+    def electron_config(cls, input_, charge=0):
         if isinstance(input_, int):
             atomic_num = input_
         elif isinstance(input_, str):
@@ -121,6 +121,8 @@ class ElectronConfiguration:
 
     @classmethod
     def format_config(cls, subshells, order="energy", noble_gas=False, delimiter=""):
+        # TODO: correctly format when noble_gas=True and ion charge > 0 (e.g.,
+        # Z=93 and charge=2 vs Z=93 and charge=4).
 
         UTF8_SUPERSCRIPTS = {0: "\u2070", 1: "\u00b9", 2: "\u00b2", 3: "\u00b3",
                 4: "\u2074", 5: "\u2075", 6: "\u2076", 7: "\u2077",
@@ -156,6 +158,12 @@ class ElectronConfiguration:
             config.append(formatted)
         return delimiter.join(config)
 
+    @classmethod
+    def __call__(cls, input_, charge=0, order="energy", noble_gas=False, delimiter=""):
+        subshells = cls.electron_config(input_, charge)
+        formatted = cls.format_config(subshells, order, noble_gas, delimiter)
+        return formatted
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("input", help="Element or number of electrons")
@@ -177,7 +185,7 @@ if __name__ == "__main__":
     else:
         input_ = args["input"]
 
-    c = ElectronConfiguration()
-    subshells = c.get_subshells(input_, charge=args["charge"])
-    print(c.format_config(subshells, order=args["order"],
-        noble_gas=args["noble"], delimiter=args["delimiter"]))
+    config = ElectronConfiguration()
+    fmt = config(input_, charge=args["charge"], order=args["order"],
+            noble_gas=args["noble"], delimiter=args["delimiter"])
+    print(fmt)
