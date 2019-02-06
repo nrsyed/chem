@@ -120,33 +120,48 @@ class ElectronConfiguration:
         return subshells
 
     @classmethod
-    def format_config(cls, subshells, order="energy", noble_gas=False, delimiter=""):
-        # TODO: correctly format when noble_gas=True and ion charge > 0 (e.g.,
-        # Z=93 and charge=2 vs Z=93 and charge=4).
+    def noble_config(cls, subshells):
+        """
+        Given a list of subshells, remove the first N subshells corresponding
+        to the configuration of the nearest noble gas, replacing them with the
+        atomic number of said noble gas.
+        """
 
-        UTF8_SUPERSCRIPTS = {0: "\u2070", 1: "\u00b9", 2: "\u00b2", 3: "\u00b3",
-                4: "\u2074", 5: "\u2075", 6: "\u2076", 7: "\u2077",
-                8: "\u2078", 9: "\u2079"}
+        # Correctly format when noble_gas=True and ion charge > 0 (e.g.,
+        # eg, Z=93 and charge=2 vs Z=93 and charge=4.
+
+        num_electrons = sum([subshell.electrons for subshell in subshells])
+
+        k = 0
+        while noble(k) <= num_electrons:
+            k += 1
+        k -= 1
+
+        noble_atomic_num = 0
+        while k > 0:
+            noble_atomic_num = noble(k)
+            noble_subshells = cls.aufbau_config(noble_atomic_num)
+            if (len(noble_subshells) <= len(subshells) and 
+                    subshells[:len(noble_subshells)] == noble_subshells):
+                subshells = subshells[len(noble_subshells):]
+                break
+            k -= 1
+        return subshells, noble_atomic_num
+
+    @classmethod
+    def format_config(cls, subshells, order="energy", noble_gas=False, delimiter=""):
+
+        UTF8_SUPERSCRIPTS = {0: "\u2070", 1: "\u00b9", 2: "\u00b2",
+                3: "\u00b3", 4: "\u2074", 5: "\u2075", 6: "\u2076",
+                7: "\u2077", 8: "\u2078", 9: "\u2079"}
+
         config = []
 
         if noble_gas:
-            # Determine noble gas with nearest atomic number.
-            num_electrons = sum([subshell.electrons for subshell in subshells])
-            noble_atomic_num = 0
-            next_noble_atomic_num = 0
-            k = 0
-            while next_noble_atomic_num <= num_electrons:
-                noble_atomic_num = next_noble_atomic_num
-                k += 1
-                next_noble_atomic_num = noble(k)
-            if noble_atomic_num > 0:
-                # Get subshells for the noble gas; remove as many subshells
-                # from source list. Add noble gas to config.
-                noble_config = cls.aufbau_config(noble_atomic_num)
-                subshells = subshells[len(noble_config):]
-                noble_gas_abbrev = "[{}]".format(
-                        cls.NOBLE_GASES.get(noble_atomic_num, str(noble_atomic_num)))
-                config.append(noble_gas_abbrev)
+            subshells, noble_atomic_num = cls.noble_config(subshells)
+            noble_gas_abbrev = "[{}]".format(
+                    cls.NOBLE_GASES.get(noble_atomic_num, str(noble_atomic_num)))
+            config.append(noble_gas_abbrev)
 
         if order == "numeric":
             subshells.sort(key=lambda subshell: (subshell.pqn, subshell.aqn))
