@@ -159,9 +159,10 @@ class ElectronConfiguration:
 
         if noble_gas:
             subshells, noble_atomic_num = cls.noble_config(subshells)
-            noble_gas_abbrev = "[{}]".format(
-                    cls.NOBLE_GASES.get(noble_atomic_num, str(noble_atomic_num)))
-            config.append(noble_gas_abbrev)
+            if noble_atomic_num > 0:
+                noble_gas_abbrev = "[{}]".format(
+                        cls.NOBLE_GASES.get(noble_atomic_num, str(noble_atomic_num)))
+                config.append(noble_gas_abbrev)
 
         if order == "numeric":
             subshells.sort(key=lambda subshell: (subshell.pqn, subshell.aqn))
